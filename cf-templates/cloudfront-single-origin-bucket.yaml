@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: 'RAP SPIKE Distribution'
+Description: 'Content Distribution'
 
 Parameters:
   Environment:
@@ -79,7 +79,7 @@ Resources:
   CfDistribution:
     Properties:
       DistributionConfig:
-        Comment: !Sub '${Environment} - Distribution for RAP Spike'
+        Comment: !Sub '${Environment} - Content Distribution'
         DefaultCacheBehavior:
           LambdaFunctionAssociations:
             - EventType: origin-request

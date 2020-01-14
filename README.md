@@ -16,7 +16,7 @@
 
 To create the stack run the following using the `aws` cli:
 
-    aws cloudformation deploy --template-file cf-templates/cf-cloudfront-content-buckets.yaml --region us-east-1 --stack-name content-distribution --tags Project=content-distribution Application=content-distribution Environment=dev Owner=ConEng
+    aws cloudformation deploy --template-file cf-templates/cloudfront-single-origin-bucket.yaml --region us-east-1 --stack-name content-distribution --tags Project=content-distribution Application=content-distribution Environment=dev Owner=ConEng
 
 Note: This step only needs to be run the first time to create the stack. If you need to make updates please follow the
 instructions in [Update the content-distribution after changes](#update-the-content-distribution-after-changes).

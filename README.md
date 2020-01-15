@@ -24,14 +24,14 @@ Same steps as in the [SAM app readme][./sam-app/README.md].
 #### Create artifact S3 bucket
 
 ```
-aws s3 mb s3://ce-artifacts-content-distribution-20200115 --region us-east-1
+aws s3 mb s3://ce-artifacts-content-distribution-373045849756 --region us-east-1
 ```
 
 #### Package SAM app
 
 ```
 aws cloudformation package --template-file ./cf-templates/cloudfront-single-origin-bucket.yaml \
---s3-bucket ce-artifacts-content-distribution-20200115 --output-template-file ./cf-templates/app-output-sam.yaml
+--s3-bucket ce-artifacts-content-distribution-373045849756 --output-template-file ./cf-templates/app-output-sam.yaml
 ```
 
 #### Copy S3 url into cloudfront-single-origin-bucket.yaml
@@ -44,7 +44,7 @@ Code snippet on how it should look like (example):
   LambdaEdgeFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://ce-artifacts-content-distribution-20200115/7661c4754ccd7a4273cc6a631765d0e5
+      CodeUri: s3://ce-artifacts-content-distribution-373045849756/7661c4754ccd7a4273cc6a631765d0e5
       Role: !GetAtt LambdaEdgeFunctionRole.Arn
       Runtime: python3.7
       Handler: lambda_function.lambda_handler
@@ -83,7 +83,7 @@ the s3 bucket substituted in the proper locations of the template.
 To update the content-distribution stack after a merge run the following: 
 
     aws cloudformation package --template-file ./cf-templates/cf-cloudfront-content-buckets.yaml \
-    --s3-bucket ce-artifacts-content-distribution-20200115 --output-template-file ./cf-templates/app-output-sam.yaml
+    --s3-bucket ce-artifacts-content-distribution-373045849756 --output-template-file ./cf-templates/app-output-sam.yaml
 
 This will output a SAM compiled version of the template that can be used to update the stack.
 

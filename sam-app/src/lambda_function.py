@@ -4,7 +4,7 @@ import re
 import boto3
 
 S3_CLIENT = boto3.client("s3")
-CONTENTS_BUCKET_NAME = "ce-contents-content-distribution-20200115"
+CONTENTS_BUCKET_NAME = "ce-contents-content-distribution-373045849756"
 
 
 def get_matching_s3_objects(s3_client, bucket_name, prefix, suffix):

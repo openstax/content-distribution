@@ -50,7 +50,7 @@ Resources:
   LambdaEdgeFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://ce-artifacts-content-distribution-20200115/7661c4754ccd7a4273cc6a631765d0e5
+      CodeUri: s3://ce-artifacts-content-distribution-373045849756/7661c4754ccd7a4273cc6a631765d0e5
       Role:
         Fn::GetAtt:
         - LambdaEdgeFunctionRole

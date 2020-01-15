@@ -11,12 +11,54 @@
 - [Chalice Pure Lambda Functions][aws-chalice-pure-lambda]
 - [AWS Serverless Application Model][aws-sam]
 
-### Create the content-distribution stack in AWS
+### Create the content-distribution stack in AWS once
 
+#### Build SAM app
+
+Same steps as in the [SAM app readme][./sam-app/README.md].
+
+* Activate a virtualenv (Python3)
+* Build SAM app `cd sam-app` then `sam build -b ../.aws-sam`
+* Go to the base directory again `cd ..`
+
+#### Create artifact S3 bucket
+
+```
+aws s3 mb s3://ce-artifacts-content-distribution-20200115 --region us-east-1
+```
+
+#### Package SAM app
+
+```
+aws cloudformation package --template-file ./cf-templates/cloudfront-single-origin-bucket.yaml \
+--s3-bucket ce-artifacts-content-distribution-20200115 --output-template-file ./cf-templates/app-output-sam.yaml
+```
+
+#### Copy S3 url into cloudfront-single-origin-bucket.yaml
+
+* Open `./cf-templates/app-output-sam.yaml`
+* Copy&Paste whole S3 url into lambdaedge CodeUri Section `./cf-templates/cloudfront-single-origin-bucket.yaml`
+
+Code snippet on how it should look like (example):
+```yaml
+  LambdaEdgeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://ce-artifacts-content-distribution-20200115/7661c4754ccd7a4273cc6a631765d0e5
+      Role: !GetAtt LambdaEdgeFunctionRole.Arn
+      Runtime: python3.7
+      Handler: lambda_function.lambda_handler
+      Timeout: 5
+      AutoPublishAlias: live
+```
+
+#### Create the stack now
 
 To create the stack run the following using the `aws` cli:
 
-    aws cloudformation deploy --template-file cf-templates/cloudfront-single-origin-bucket.yaml --region us-east-1 --stack-name content-distribution --tags Project=content-distribution Application=content-distribution Environment=dev Owner=ConEng
+```
+aws cloudformation deploy --template-file cf-templates/cloudfront-single-origin-bucket.yaml --region us-east-1 --stack-name content-distribution --tags Project=content-distribution Application=content-distribution Environment=dev Owner=ConEng --capabilities CAPABILITY_IAM
+```
 
 Note: This step only needs to be run the first time to create the stack. If you need to make updates please follow the
 instructions in [Update the content-distribution after changes](#update-the-content-distribution-after-changes).
@@ -41,7 +83,7 @@ the s3 bucket substituted in the proper locations of the template.
 To update the content-distribution stack after a merge run the following: 
 
     aws cloudformation package --template-file ./cf-templates/cf-cloudfront-content-buckets.yaml \
-    --s3-bucket ce-artifacts-content-distribution-373045849756 --output-template-file ./cf-templates/app-output-sam.yaml
+    --s3-bucket ce-artifacts-content-distribution-20200115 --output-template-file ./cf-templates/app-output-sam.yaml
 
 This will output a SAM compiled version of the template that can be used to update the stack.
 

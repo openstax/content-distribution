@@ -50,7 +50,7 @@ Resources:
   LambdaEdgeFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../.aws-sam/build/LambdaEdgeFunction/
+      CodeUri: s3://ce-artifacts-content-distribution-20200115/7661c4754ccd7a4273cc6a631765d0e5
       Role: !GetAtt LambdaEdgeFunctionRole.Arn
       Runtime: python3.7
       Handler: lambda_function.lambda_handler

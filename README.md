@@ -29,10 +29,24 @@ Note: This command will take about 15-25min to complete. It will create the foll
 - Raw JSON S3 Bucket
 - Baked HTML S3 Bucket
 - Resources S3 Bucket
+- It will not create the [Lambda Function](./sam-app/lambda_function.py) because this requires the Artifact S3 to be created first.
 
-It will not create the [Lambda Function](./sam-app/lambda_function.py) because this requires the Artifact S3 to be created first.
+You can see the progress of deployment in the AWS console [here](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks). Click on the stack name `content-distribution` and open the `events` tab.
 
 ### Update the content-distribution after changes
+
+#### Build SAM app
+
+If you have done by now please build the SAM app:
+
+```bash
+cd sam-app
+# activate a Python3 virtualenv here!
+sam build -b ../.aws-sam
+cd ..
+```
+
+#### Package SAM app and upload
 
 The `aws cloudformation` command can package up the changes and upload to an s3 bucket.
 It allows you to do this by using the `package` argument along with `--s3-bucket` and `--output-template-file` options.

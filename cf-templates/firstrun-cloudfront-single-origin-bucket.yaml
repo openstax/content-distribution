@@ -47,43 +47,43 @@ Resources:
               - !Sub 'arn:aws:s3:::${ContentsBucket}/*'
     Type: 'AWS::S3::BucketPolicy'
 
-  LambdaEdgeFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ../.aws-sam/LambdaEdgeFunction/
-      Role: !GetAtt LambdaEdgeFunctionRole.Arn
-      Runtime: python3.7
-      Handler: lambda_function.lambda_handler
-      Timeout: 5
-      AutoPublishAlias: live
+  # LambdaEdgeFunction:
+  #   Type: AWS::Serverless::Function
+  #   Properties:
+  #     CodeUri: s3://ce-artifacts-content-distribution-373045849756/6cb9fb109d82fcc0cabfc93f98e23b08
+  #     Role: !GetAtt LambdaEdgeFunctionRole.Arn
+  #     Runtime: python3.7
+  #     Handler: lambda_function.lambda_handler
+  #     Timeout: 5
+  #     AutoPublishAlias: live
 
-  LambdaEdgeFunctionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      Path: "/"
-      ManagedPolicyArns:
-        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-        - "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Sid: "AllowLambdaServiceToAssumeRole"
-            Effect: "Allow"
-            Action:
-              - "sts:AssumeRole"
-            Principal:
-              Service:
-                - "lambda.amazonaws.com"
-                - "edgelambda.amazonaws.com"
+  # LambdaEdgeFunctionRole:
+  #   Type: AWS::IAM::Role
+  #   Properties:
+  #     Path: "/"
+  #     ManagedPolicyArns:
+  #       - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+  #       - "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+  #     AssumeRolePolicyDocument:
+  #       Version: "2012-10-17"
+  #       Statement:
+  #         - Sid: "AllowLambdaServiceToAssumeRole"
+  #           Effect: "Allow"
+  #           Action:
+  #             - "sts:AssumeRole"
+  #           Principal:
+  #             Service:
+  #               - "lambda.amazonaws.com"
+  #               - "edgelambda.amazonaws.com"
 
   CfDistribution:
     Properties:
       DistributionConfig:
         Comment: !Sub '${Environment} - Content Distribution'
         DefaultCacheBehavior:
-          LambdaFunctionAssociations:
-            - EventType: origin-request
-              LambdaFunctionARN: !Ref LambdaEdgeFunction.Version
+          # LambdaFunctionAssociations:
+          #   - EventType: origin-request
+          #     LambdaFunctionARN: !Ref LambdaEdgeFunction.Version
           AllowedMethods:
             - 'HEAD'
             - 'GET'
@@ -130,9 +130,9 @@ Outputs:
   ContentsBucket:
     Description: 'CE Book Contents S3 Bucket'
     Value: !Ref ContentsBucket
-  LambdaEdgeFunction:
-    Description: Lambda@Edge handler for content
-    Value: !Ref LambdaEdgeFunction.Version
+  # LambdaEdgeFunction:
+  #   Description: Lambda@Edge handler for content
+  #   Value: !Ref LambdaEdgeFunction.Version
   CfDistributionId:
     Description: 'Id for our cloudfront distribution'
     Value: !Ref CfDistribution

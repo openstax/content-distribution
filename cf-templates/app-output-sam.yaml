@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: RAP SPIKE Distribution
+Description: Content Distribution
 Parameters:
   Environment:
     Type: String
@@ -50,7 +50,7 @@ Resources:
   LambdaEdgeFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://ce-artifacts-rap-distribution-373045849756/dd50036dd2f987ee8dd9dea4726b471c
+      CodeUri: s3://ce-artifacts-content-distribution-373045849756/220db3eddd13046ea66fa438f67e24ba
       Role:
         Fn::GetAtt:
         - LambdaEdgeFunctionRole
@@ -81,7 +81,7 @@ Resources:
     Properties:
       DistributionConfig:
         Comment:
-          Fn::Sub: ${Environment} - Distribution for RAP Spike
+          Fn::Sub: ${Environment} - Content Distribution
         DefaultCacheBehavior:
           LambdaFunctionAssociations:
           - EventType: origin-request

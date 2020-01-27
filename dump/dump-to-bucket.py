@@ -176,7 +176,6 @@ test_tree_idents = [
 ]
 assert list(flatten_tree_to_ident_hashes(test_tree)) == test_tree_idents
 
-
 def scrape_version(id, version, host, visited_locs, book=None,
                    is_composite_page=False):
     """
@@ -203,7 +202,7 @@ def scrape_version(id, version, host, visited_locs, book=None,
         temperature = 'raw'
         format_ = 'json'
         url = f'{base_raw_url}.{format_}{raw_postfix}'
-        debug(f'Requesting {temperature} JSON {T.bold}{type_}{T.normal} at {T.yellow}{url}{T.normal}')
+        debug(f'Requesting {T.blue}{temperature} JSON {type_}{T.normal} at {T.green}{url}{T.normal}')
         resp = session.get(url)
         yield io.BytesIO(resp.content), 'application/json', f'{temperature}-{type_}-json', [ident_hash_seq[-1]]
 
@@ -214,7 +213,7 @@ def scrape_version(id, version, host, visited_locs, book=None,
         temperature = 'raw'
         format_ = 'html'
         url = f'{base_raw_url}.{format_}{raw_postfix}'
-        debug(f'Requesting {temperature} HTML {T.bold}{type_}{T.normal} at {T.yellow}{url}{T.normal}')
+        debug(f'Requesting {T.blue}{temperature} HTML {type_}{T.normal} at {T.green}{url}{T.normal}')
         resp = session.get(url)
         yield io.BytesIO(resp.content), 'text/html', f'{temperature}-{type_}-html', [ident_hash_seq[-1]]
 
@@ -222,7 +221,7 @@ def scrape_version(id, version, host, visited_locs, book=None,
     temperature = 'baked'
     format_ = 'json'
     url = f'{base_baked_url}.{format_}'
-    debug(f'Requesting {temperature} JSON {T.bold}{type_}{T.normal} at {T.yellow}{url}{T.normal}')
+    debug(f'Requesting {T.yellow}{temperature} JSON {type_}{T.normal} at {T.green}{url}{T.normal}')
     resp = session.get(url)
     yield io.BytesIO(resp.content), 'application/json', f'{temperature}-{type_}-json', ident_hash_seq
 
@@ -233,7 +232,7 @@ def scrape_version(id, version, host, visited_locs, book=None,
     temperature = 'baked'
     format_ = 'html'
     url = f'{base_baked_url}.html'
-    debug(f'Requesting {temperature} HTML {T.bold}{type_}{T.normal} at {T.yellow}{url}{T.normal}')
+    debug(f'Requesting {T.yellow}{temperature} HTML {type_}{T.normal} at {T.green}{url}{T.normal}')
     resp = session.get(url)
     yield io.BytesIO(resp.content), 'text/html', f'{temperature}-{type_}-html', ident_hash_seq
 
@@ -241,7 +240,7 @@ def scrape_version(id, version, host, visited_locs, book=None,
     for res_entity in baked_json['resources']:
         # Request the resource itself
         url = f'https://{host}/resources/{res_entity["id"]}'
-        debug(f'Requesting {T.bold}resource{T.normal} at {T.yellow}{url}{T.normal}')
+        debug(f'Requesting {T.red}resource{T.normal} at {T.green}{url}{T.normal}')
         resp = session.get(url)
         yield io.BytesIO(resp.content), str(res_entity['media_type']), 'resource', res_entity['id']
 
@@ -253,7 +252,6 @@ def scrape_version(id, version, host, visited_locs, book=None,
             yield from scrape_version(page_id, page_version, host, visited_locs, book=(id, version,),
                                       is_composite_page=(page_ident_hash not in raw_pages))
 
-
 def dump_in_bucket(items, raw_bucket_name, baked_bucket_name, resources_bucket_name, region, gen_filepath):
     s3 = boto3.resource('s3', region_name=region)
     raw_bucket = s3.Bucket(raw_bucket_name)
@@ -264,15 +262,14 @@ def dump_in_bucket(items, raw_bucket_name, baked_bucket_name, resources_bucket_n
         data, media_type, type, ident = item
         key = gen_filepath(type, ident)
         if type.startswith('baked'):
-            debug(f'Dumping {T.blue}{type}{T.normal} into bucket "{baked_bucket_name}" at "{T.green_bold}{key}{T.normal}" ({media_type})')
+            debug(f'Dumping {T.yellow}{type}{T.normal} into bucket "{baked_bucket_name}" at "{T.green_bold}{key}{T.normal}" ({media_type})')
             baked_bucket.upload_fileobj(data, key, ExtraArgs={'ContentType': media_type})
         elif type.startswith('resource'):
-            debug(f'Dumping {T.blue}{type}{T.normal} into bucket "{resources_bucket_name}" at "{T.green_bold}{key}{T.normal}" ({media_type})')
+            debug(f'Dumping {T.red}{type}{T.normal} into bucket "{resources_bucket_name}" at "{T.green_bold}{key}{T.normal}" ({media_type})')
             resources_bucket.upload_fileobj(data, key, ExtraArgs={'ContentType': media_type})
         else:
             debug(f'Dumping {T.blue}{type}{T.normal} into bucket "{raw_bucket_name}" at "{T.green_bold}{key}{T.normal}" ({media_type})')
             raw_bucket.upload_fileobj(data, key, ExtraArgs={'ContentType': media_type})
-
 
 @click.command()
 @click.option('-v', '--verbose', is_flag=True, help='Enables verbose mode')

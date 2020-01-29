@@ -116,8 +116,7 @@ def scrape(book, host, visited_locs=VISITED_LOCS_MARKER):
         base_url = f'https://{host}/contents'
         url = f'{base_url}/{id}.json'
         resp = session.get(url)
-        latest_version = resp.json()['version']
-        version = latest_version
+        version = resp.json()['version']
         info(f'Latest Version: {T.bold}{id}@{version}{T.normal}')
 
     # Get the latest version's contents and resources
@@ -266,7 +265,8 @@ def dump_in_bucket(items, raw_bucket_name, baked_bucket_name, resources_bucket_n
             baked_bucket.upload_fileobj(data, key, ExtraArgs={'ContentType': media_type})
         elif type.startswith('resource'):
             debug(f'Dumping {T.red}{type}{T.normal} into bucket "{resources_bucket_name}" at "{T.green_bold}{key}{T.normal}" ({media_type})')
-            resources_bucket.upload_fileobj(data, key, ExtraArgs={'ContentType': media_type})
+            if media_type == 'image/jpeg':
+                resources_bucket.upload_fileobj(data, key, ExtraArgs={'ContentType': media_type})
         else:
             debug(f'Dumping {T.blue}{type}{T.normal} into bucket "{raw_bucket_name}" at "{T.green_bold}{key}{T.normal}" ({media_type})')
             raw_bucket.upload_fileobj(data, key, ExtraArgs={'ContentType': media_type})

@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Content Distribution
+Description: CD DeleteMe
 Parameters:
   Environment:
     Type: String
@@ -50,7 +50,7 @@ Resources:
   LambdaEdgeFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://ce-artifacts-content-distribution-373045849756/220db3eddd13046ea66fa438f67e24ba
+      CodeUri: s3://ce-artifacts-cd-deleteme-373045849756/220db3eddd13046ea66fa438f67e24ba
       Role:
         Fn::GetAtt:
         - LambdaEdgeFunctionRole
@@ -81,7 +81,7 @@ Resources:
     Properties:
       DistributionConfig:
         Comment:
-          Fn::Sub: ${Environment} - Content Distribution
+          Fn::Sub: ${Environment} - CD DeleteMe
         DefaultCacheBehavior:
           LambdaFunctionAssociations:
           - EventType: origin-request

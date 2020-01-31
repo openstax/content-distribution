@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: 'Content Distribution'
+Description: 'CD DeleteMe'
 
 Parameters:
   Environment:
@@ -79,7 +79,7 @@ Resources:
   CfDistribution:
     Properties:
       DistributionConfig:
-        Comment: !Sub '${Environment} - Content Distribution'
+        Comment: !Sub '${Environment} - CD DeleteMe'
         DefaultCacheBehavior:
           LambdaFunctionAssociations:
             - EventType: origin-request

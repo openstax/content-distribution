@@ -16,7 +16,7 @@
 To create the stack run the following using the `aws` cli:
 
 ```bash
-aws cloudformation deploy --template-file cf-templates/firstrun-cloudfront-single-origin-bucket.yaml --region us-east-1 --stack-name content-distribution --tags Project=content-distribution Application=content-distribution Environment=dev Owner=ConEng --capabilities CAPABILITY_IAM
+aws cloudformation deploy --template-file cf-templates/firstrun-cloudfront-single-origin-bucket.yaml --region us-east-1 --stack-name cd-deleteme --tags Project=cd-deleteme Application=cd-deleteme Environment=dev Owner=ConEng --capabilities CAPABILITY_IAM
 ```
 
 Note: This step only needs to be run the first time to create the stack. If you need to make updates please follow the
@@ -31,7 +31,7 @@ Note: This command will take about 15-25min to complete. It will create the foll
 - Resources S3 Bucket
 - It will not create the [Lambda Function](./sam-app/lambda_function.py) because this requires the Artifact S3 to be created first.
 
-You can see the progress of deployment in the AWS console [here](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks). Click on the stack name `content-distribution` and open the `events` tab.
+You can see the progress of deployment in the AWS console [here](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks). Click on the stack name `cd-deleteme` and open the `events` tab.
 
 ### Update the content-distribution after changes
 
@@ -58,7 +58,7 @@ To update (or first install) the content-distribution stack after a merge run th
 
 ```bash
 aws cloudformation package --template-file ./cf-templates/cloudfront-single-origin-bucket.yaml \
---s3-bucket ce-artifacts-content-distribution-373045849756 --output-template-file ./cf-templates/app-output-sam.yaml
+--s3-bucket ce-artifacts-cd-deleteme-373045849756 --output-template-file ./cf-templates/app-output-sam.yaml
 ```
 
 This will output a SAM compiled version of the template that can be used to update the stack.
@@ -66,7 +66,7 @@ This will output a SAM compiled version of the template that can be used to upda
 Run the following command after the one above to update the stack:
 
 ```bash
-aws cloudformation update-stack --stack-name content-distribution \
+aws cloudformation update-stack --stack-name cd-deleteme \
 --region us-east-1 --capabilities CAPABILITY_AUTO_EXPAND CAPABILITY_IAM \
 --template-body file://./cf-templates/app-output-sam.yaml
 ```

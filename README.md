@@ -1,91 +1,65 @@
+
+
 # Content Distribution System
 
-## Using Cloudformation
+Our Content Distribution System is how we serve our downstream users OpenStax content (book) data.
+This repository holds our CloudFormation Template to deploy and update our Content Distribution Stack in AWS using the AWS CLI.
 
-### Articles that are useful
+**Our Content Distribution Stack is made up of 3 AWS Resources:**  
+1. [AWS CloudFront](https://aws.amazon.com/cloudfront/) (CDN Service) - For distribution of the content data   
+2. [AWS S3](https://aws.amazon.com/s3/) (Object Storage Service) - For storage of the content data   
+3. [AWS CloudFormation](https://aws.amazon.com/cloudformation/) (IaC templating) - For templating and deployment of the above AWS services
 
-- [AWS CloudFormation Documentation][aws-cloudformation]
-- [Managing Lambda@Edge and CloudFront deployments by using a CI/CD pipeline][aws-cf-lambda-ci]
-- [Amazon S3 + Amazon CloudFront: A Match Made in the Cloud][aws-cf-s3]
-- [Chalice CloudFormation Support][aws-chalice-support]
-- [Chalice Pure Lambda Functions][aws-chalice-pure-lambda]
-- [AWS Serverless Application Model][aws-sam]
+Exploration for the *Content Distribution Stack* was done during our [rap-lambda-spike](https://github.com/openstax/rap-spike-lambda#using-cloudformation). (September 2019)
 
-### Create the content-distribution stack in AWS once
+In the final version of the *Content Distribution Stack*, we decided to move forward without the use of AWS Lambda@Edge Functions. Without AWS Lambda@Edge Functions we forgo the need of AWS SAM, which was a layer to help with Infrastructure as Code (IaC) templating with applications that use AWS Lambda Functions. References of SAM and Lambda Functions can be found in the history of this README.md or rap-spike-lambda repository (above).
 
-To create the stack run the following using the `aws` cli:
+Note: The difference between a Lambda Function and a Lambda@Edge Function is that a Lambda@Edge function is associated with a CloudFront Distribution.
 
-```bash
-aws cloudformation deploy --template-file cf-templates/firstrun-cloudfront-single-origin-bucket.yaml --region us-east-1 --stack-name content-distribution --tags Project=content-distribution Application=content-distribution Environment=dev Owner=ConEng --capabilities CAPABILITY_IAM
-```
+## Getting Started
+This stack is created and deployed with AWS CloudFormation. AWS CloudFormation gives us a single source of truth with a simple text file, in our case `cloudfront-single-origin-bucket.yaml`, to help us describe and provision our AWS cloud infrastructure as oppose to using the AWS Management Console directly.
 
-Note: This step only needs to be run the first time to create the stack. If you need to make updates please follow the
-instructions in [Update the content-distribution after changes](#update-the-content-distribution-after-changes).
+Reference: [AWS CloudFormation Documentation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html)
 
-Note: This command will take about 15-25min to complete. It will create the following resources in AWS:
+### Prerequisites
+You will need to have [AWS CLI](https://aws.amazon.com/cli/) to run commands for AWS CloudFormation.
 
-- Cloudfront distribution
-- Artifact S3 Bucket
-- Raw JSON S3 Bucket
-- Baked HTML S3 Bucket
-- Resources S3 Bucket
-- It will not create the [Lambda Function](./sam-app/lambda_function.py) because this requires the Artifact S3 to be created first.
+### Create Content Distribution Stack in AWS
+This step only needs to be run once to create the stack. 
+To make updates to the stack, see [Update Content Distribution After Changes](#update-content-distribution-after-changes).
 
-You can see the progress of deployment in the AWS console [here](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks). Click on the stack name `content-distribution` and open the `events` tab.
-
-### Update the content-distribution after changes
-
-#### Build SAM app
-
-If you have done by now please build the SAM app:
+Create stack, run AWS CLI Command:
 
 ```bash
-cd sam-app
-# activate a Python3 virtualenv here!
-sam build -b ../.aws-sam
-cd ..
+aws cloudformation deploy \
+--stack-name cops-distribution \
+--template-file cf-templates/cloudfront-single-origin-bucket.yaml \
+--region us-east-1 \
+--tags Project=content-distribution Application=content-distribution Environment=dev Owner=ConEng \
+--capabilities CAPABILITY_IAM
 ```
+This command will take about 15-25min to complete. It will create the following resources in AWS:
 
-#### Package SAM app and upload
+- AWS CloudFront Distribution
+- 2 AWS S3 Buckets:
+	- Artifacts Bucket: Resources for the CloudFront Distribution
+	- Contents Bucket: Where Content Data is stored, this will initially be empty.
 
-The `aws cloudformation` command can package up the changes and upload to an s3 bucket.
-It allows you to do this by using the `package` argument along with `--s3-bucket` and `--output-template-file` options.
+### Watch Content Distribution Stack Progress
+Watch the progress of deployment in the AWS CloudFormation Console [here](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks). 
+Click on the stack name `cops-distribution` and open the `events` tab.
 
-This will package up the lambda function, upload to the s3 bucket, and generate a new template that has
-the s3 bucket substituted in the proper locations of the template.
+### Update Content Distribution Stack After Changes
 
-To update (or first install) the content-distribution stack after a merge run the following:
+If any update is made to the stack via the template the following can be ran:
 
 ```bash
-aws cloudformation package --template-file ./cf-templates/cloudfront-single-origin-bucket.yaml \
---s3-bucket ce-artifacts-content-distribution-373045849756 --output-template-file ./cf-templates/app-output-sam.yaml
+aws cloudformation update-stack \ 
+--stack-name cops-distribution \
+--use-previous-template \
+--region us-east-1 \
+--capabilities CAPABILITY_AUTO_EXPAND CAPABILITY_IAM
 ```
 
-This will output a SAM compiled version of the template that can be used to update the stack.
-
-Run the following command after the one above to update the stack:
-
-```bash
-aws cloudformation update-stack --stack-name content-distribution \
---region us-east-1 --capabilities CAPABILITY_AUTO_EXPAND CAPABILITY_IAM \
---template-body file://./cf-templates/app-output-sam.yaml
-```
-
-## Loading the books into s3
-
-Follow the instructions in [./dump/README.md](./dump/README.md) file.
-
-## Using SAM to build and test the Lambda@Edge function
-
-Follow the instruction in [.sam-app/README.md](./sam-app/README.md) file.
-
-[cnx-archive]: https://github.com/openstax/cnx-archive
-[cnx-db]: https://github.com/openstax/cnx-db
-[content-spike-concourse]: https://github.com/openstax/content-spike-concourse
-[content-two-pager]: https://docs.google.com/document/d/1GW5VGrjKmIRw3nbFTIkBZgE0mlHD9ky2TJ_bSUIcJ_w/edit#heading=h.6u0c02buvzha
-[aws-cloudformation]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html
-[aws-chalice-support]: https://chalice.readthedocs.io/en/latest/topics/cfn.html
-[aws-chalice-pure-lambda]: https://chalice.readthedocs.io/en/latest/topics/purelambda.html
-[aws-sam]: https://aws.amazon.com/serverless/sam/
-[aws-cf-lambda-ci]: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-options.html
-[aws-cf-s3]: https://aws.amazon.com/blogs/networking-and-content-delivery/amazon-s3-amazon-cloudfront-a-match-made-in-the-cloud/
+### Load Data for Content Distribution Stack
+Once the distribution is up the S3 buckets will contain no content (book) data. To load content (book) data into the S3 content bucket see the instructions in [./dump/README.md](./dump/README.md) file, the script to load Books into S3 is currently dependent on the (old) archive.

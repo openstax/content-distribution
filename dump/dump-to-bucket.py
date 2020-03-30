@@ -7,10 +7,10 @@ This dumps a book into an S3 bucket using the following S3 filesystem structure:
 
 For baked content
 
-- ``/baked/{uuid}@{version}.json``
-- ``/baked/{uuid}@{version}.html``
-- ``/baked/{uuid}@{version}:{uuid}.json``
-- ``/baked/{uuid}@{version}:{uuid}.html``
+- ``/contents/{uuid}@{version}.json``
+- ``/contents/{uuid}@{version}.html``
+- ``/contents/{uuid}@{version}:{uuid}.json``
+- ``/contents/{uuid}@{version}:{uuid}.html``
 
 For resources:
 
@@ -292,7 +292,7 @@ def main(verbose, book, host, raw_bucket, baked_bucket, resources_bucket, bucket
     if bucket:
         raw_bucket = baked_bucket = resources_bucket = bucket
         raw_prefix = 'raw/'
-        baked_prefix = 'baked/'
+        baked_prefix = 'contents/'
         resource_prefix = 'resources/'
     else:
         raw_prefix = baked_prefix = resource_prefix = ''

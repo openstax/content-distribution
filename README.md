@@ -40,10 +40,8 @@ aws cloudformation deploy \
 ```
 This command will take about 15-25min to complete. It will create the following resources in AWS:
 
-- AWS CloudFront Distribution
-- 2 AWS S3 Buckets:
-	- Artifacts Bucket: Resources for the CloudFront Distribution
-	- Contents Bucket: Where Content Data is stored, this will initially be empty.
+- AN AWS CloudFront Distribution
+- AN AWS S3 Bucket: Where Content Data is stored, this will initially be empty.
 
 ### Watch Content Distribution Stack Progress
 Watch the progress of deployment in the AWS CloudFormation Console [here](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks). 

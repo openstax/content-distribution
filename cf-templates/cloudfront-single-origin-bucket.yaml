@@ -12,16 +12,6 @@ Parameters:
     Description: Environment that can be added to resource names
 
 Resources:
-
-  ArtifactsBucket:
-    DeletionPolicy: 'Delete'
-    Metadata:
-      Comment: 'Bucket to store code artifacts for distribution output producer'
-    Properties:
-      AccessControl: 'Private'
-      BucketName: !Sub 'ce-artifacts-${AWS::StackName}-${AWS::AccountId}'
-    Type: 'AWS::S3::Bucket'
-
   ContentsBucket:
     DeletionPolicy: 'Delete'
     Metadata:
@@ -92,9 +82,6 @@ Resources:
     Type: 'AWS::CloudFront::CloudFrontOriginAccessIdentity'
 
 Outputs:
-  ArtifactsBucket:
-    Description: 'CE Artifacts S3 Bucket'
-    Value: !Ref ArtifactsBucket
   ContentsBucket:
     Description: 'CE Book Contents S3 Bucket'
     Value: !Ref ContentsBucket

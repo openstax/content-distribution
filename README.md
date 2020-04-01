@@ -25,8 +25,7 @@ Reference: [AWS CloudFormation Documentation](https://docs.aws.amazon.com/AWSClo
 You will need to have [AWS CLI](https://aws.amazon.com/cli/) to run commands for AWS CloudFormation.
 
 ### Create Content Distribution Stack in AWS
-This step only needs to be run once to create the stack. 
-To make updates to the stack, see [Update Content Distribution After Changes](#update-content-distribution-after-changes).
+This step only needs to be run once to create the stack.
 
 Create stack, run AWS CLI Command:
 
@@ -46,18 +45,6 @@ This command will take about 15-25min to complete. It will create the following 
 ### Watch Content Distribution Stack Progress
 Watch the progress of deployment in the AWS CloudFormation Console [here](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks). 
 Click on the stack name `cops-distribution` and open the `events` tab.
-
-### Update Content Distribution Stack After Changes
-
-If any update is made to the stack via the template the following can be ran:
-
-```bash
-aws cloudformation update-stack \ 
---stack-name cops-distribution \
---use-previous-template \
---region us-east-1 \
---capabilities CAPABILITY_AUTO_EXPAND CAPABILITY_IAM
-```
 
 ### Load Data for Content Distribution Stack
 Once the distribution is up the S3 buckets will contain no content (book) data. To load content (book) data into the S3 content bucket see the instructions in [./dump/README.md](./dump/README.md) file, the script to load Books into S3 is currently dependent on the (old) archive.
